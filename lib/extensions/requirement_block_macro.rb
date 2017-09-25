@@ -1,0 +1,25 @@
+require 'asciidoctor'
+require 'asciidoctor/extensions'
+require_relative 'utils/requirement_walker'
+
+include ::Asciidoctor
+
+
+class RequirementsBlockMacro < Extensions::BlockMacroProcessor
+  use_dsl
+  named :requirements
+  def process(parent, target, attrs)
+    rows = Reqs.list_reqs
+    content = %(<h2 id="requirements"><a class="anchor" href="#requirements"></a><a class="link" href="#requirements">Requirements</a></h2>
+    <div class="panel panel-default"> <div class="panel-heading"><h4>Requirements</h4></div>
+      <table class="table"> <thead> <tr>
+        <th>#</th> <th>ID</th><th>Version</th> <th>Title</th> <th>Document</th>
+      </tr> </thead>
+      <tbody>
+        #{rows.join}
+      </tbody>
+      </table> </div>)
+
+    create_pass_block parent, content, {}
+  end
+end

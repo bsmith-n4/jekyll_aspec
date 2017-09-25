@@ -1,6 +1,6 @@
 require 'test/unit'
 require 'asciidoctor'
-require_relative "../lib/extensions/requirement_block"
+require_relative '../lib/extensions/requirement_block'
 
 # Register the Requirement block processor
 Extensions.register do
