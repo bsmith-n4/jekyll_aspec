@@ -1,5 +1,5 @@
 require "bundler/gem_tasks"
-task :default => :spec
+task :default => :test
 
 task :test do
   ruby "test/suite.rb"
