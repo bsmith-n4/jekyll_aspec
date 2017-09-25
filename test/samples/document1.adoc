@@ -1,13 +1,10 @@
-= title
+= Document One
 
 content
-
 
 .Requirement Title
 [req,id=123,version=1]
 --
 Content of the requirement
 --
-
-
 

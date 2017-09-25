@@ -39,7 +39,7 @@ class TestRequirementBlock < Test::Unit::TestCase
 		Asciidoctor::Document.new(input).render)
 	end
 
-	def test_delimited
+	def test_delimited_no_title
 		input = 
 		"\nprevious content\n\n[req,id=RCD-39,version=1]\n--\nTests should be automated.\n--\n"
 

@@ -24,9 +24,9 @@ class RequirementBlock < Extensions::BlockProcessor
       downcased_title = attrs["title"].downcase.tr(" ", "_").gsub('"', "&quot;")
       san_title = attrs["title"].gsub(/&/, "&amp;")
     rescue Exception => msg
-      puts msg
+      # puts msg
       # If no title exists on the Req block, throw an exception
-      puts "[ERROR] Requirement block title missing"
+      warn %(asciidoctor: WARNING: Requirement block title missing)
     end
 
     alt = %(
