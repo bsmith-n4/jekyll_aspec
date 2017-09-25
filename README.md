@@ -1,8 +1,10 @@
-# Jekyll::Aspec
+# Jekyll Aspec
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/jekyll/aspec`. To experiment with that code, run `bin/console` for an interactive prompt.
+[![Build Status](https://travis-ci.org/bsmith-n4/jekyll_aspec.svg?branch=master)](https://travis-ci.org/bsmith-n4/jekyll_aspec)
 
-TODO: Delete this and the text above, and describe your gem
+A selection of Asciidoctor extensions designed to used with Jekyll. 
+
+These extensions add custom blocks for Requirements, Definitions and inter-document auto-linking functionality for these blocks.
 
 ## Installation
 
@@ -20,10 +22,6 @@ Or install it yourself as:
 
     $ gem install jekyll-aspec
 
-## Usage
-
-TODO: Write usage instructions here
-
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -32,7 +30,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/jekyll-aspec.
+Bug reports and pull requests are welcome on GitHub at https://github.com/bsmith-n4/jekyll_aspec.
 
 ## License
 
