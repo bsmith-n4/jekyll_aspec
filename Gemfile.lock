@@ -1,0 +1,22 @@
+PATH
+  remote: .
+  specs:
+    jekyll_aspec (0.0.1.pre)
+      asciidoctor (~> 1.5, >= 1.5.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    asciidoctor (1.5.6.1)
+    rake (10.5.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bundler (~> 1.16.a)
+  jekyll_aspec!
+  rake (~> 10.0)
+
+BUNDLED WITH
+   1.16.0.pre.2
