@@ -12,3 +12,6 @@ require_relative "extensions/todo_block"
 
 require "jekyll_aspec/version"
 
+Extensions.register do
+  block TodoBlock
+end
