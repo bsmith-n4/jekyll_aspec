@@ -2,21 +2,25 @@ PATH
   remote: .
   specs:
     jekyll_aspec (0.0.1.pre)
-      asciidoctor (~> 1.5, >= 1.5.0)
+      asciidoctor
 
 GEM
   remote: https://rubygems.org/
   specs:
     asciidoctor (1.5.6.1)
+    power_assert (1.0.2)
     rake (10.5.0)
+    test-unit (3.2.4)
+      power_assert
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 1.16.a)
+  bundler
   jekyll_aspec!
-  rake (~> 10.0)
+  rake
+  test-unit
 
 BUNDLED WITH
    1.16.0.pre.2
