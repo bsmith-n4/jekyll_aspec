@@ -10,5 +10,5 @@ require_relative "extensions/requirement_appendix"
 require_relative "extensions/requirement_block"
 require_relative "extensions/todo_block"
 
-require "jekyll-aspec/version"
+require "jekyll_aspec/version"
 
