@@ -3,6 +3,7 @@ require "asciidoctor/extensions" unless RUBY_ENGINE == "opal"
 include ::Asciidoctor
 
 class RequirementBlock < Extensions::BlockProcessor
+  use_dsl
   named :req
   on_contexts :open, :paragraph, :example, :listing, :sidebar, :pass
   name_positional_attributes "number", "version"
