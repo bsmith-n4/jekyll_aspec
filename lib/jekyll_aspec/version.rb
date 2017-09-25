@@ -1,3 +1,3 @@
 module JekyllAspec
-  VERSION = "0.0.1.pre"
+  VERSION = "1.0.0.alpha"
 end
