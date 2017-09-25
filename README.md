@@ -8,7 +8,7 @@ These extensions add custom blocks for Requirements, Definitions and inter-docum
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add `jekyll_aspec` to your Jekyll Gemfile:
 
 ```ruby
 group :jekyll_plugins do
