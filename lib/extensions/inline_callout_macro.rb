@@ -2,13 +2,11 @@ require 'asciidoctor/extensions'
 
 include ::Asciidoctor
 
-Extensions.register do
-  block do
-    named :sample
-    on_context :open
-
-    process do |parent, reader, attrs|
-      create_paragraph parent, reader.lines, attrs
+Asciidoctor::Extensions.register do
+  inline_macro do
+    named :call
+    process do |parent, target, attrs|
+      Asciidoctor::Inline.new(parent, :callout, target.to_i).convert
     end
   end
 end

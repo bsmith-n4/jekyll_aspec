@@ -1,0 +1,3 @@
+language: ruby
+2 rvm:
+3   - 2.3
