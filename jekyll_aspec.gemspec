@@ -13,6 +13,9 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/bsmith-n4/jekyll_aspec"
   spec.license       = "MIT"
 
+  # This gem will work with 2.0 or greater.
+  spec.required_ruby_version = '>= 2.0'
+
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
   end
