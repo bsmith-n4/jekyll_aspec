@@ -2,6 +2,8 @@ require "asciidoctor/extensions" unless RUBY_ENGINE == "opal"
 
 include ::Asciidoctor
 
+# TODO convert to regular pass block
+
 class RequirementBlock < Extensions::BlockProcessor
   use_dsl
   named :req

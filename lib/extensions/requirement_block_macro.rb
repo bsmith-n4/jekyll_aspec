@@ -1,6 +1,6 @@
 require 'asciidoctor'
 require 'asciidoctor/extensions'
-require_relative 'utils/requirement_walker'
+require_relative 'utils/req_macro_walker'
 
 include ::Asciidoctor
 
