@@ -2,26 +2,30 @@ require 'asciidoctor/extensions' unless RUBY_ENGINE == 'opal'
 
 include ::Asciidoctor
 
+# @todo check if all code before the macro can be moved into util directory as helper methods
+
+# @todo Don't do this
 adoc_files = Dir.glob('**/*.adoc')
+# @todo Retrieve these via document attributes, should not be hardcoded
+docsdir = '_docs'
 exts = '(\.adoc|\.md|\.html)'
 
 rpath = nil
 rtext = nil
+orphan = false
+
 reqs = []
 inc_reqs = []
 com_reqs = []
 incs = []
 xrefs = []
+
 xref_base = ''
 
-blockrx = %r(^\/{4,}$)
+blockrx = %r{^\/{4,}$}
 linerx = %r{^//(?=[^/]|$)}
 
-orphan = false
-
-# Retrieve this via document attribute
-docsdir = '_docs'
-
+# @todo called helper method here
 def trim(s)
   s.gsub!(/_docs\//, '')
   s.gsub!(/(\.adoc|\.md|\.html)/, '')
@@ -90,11 +94,16 @@ end
 # Sort (in-place) by numberic ID
 reqs.sort_by!(&:first)
 
+# @todo convert to formal 
 Extensions.register do
   inline_macro do
     named :requirement_autoxref
 
     # Regex-based, will match "See Req-ROPR-123 for..."
+    # Will also match <<Req-ROPR-123>>
+    # @todo this is a heavy-handed approach to matching all 
+    # xrefs. Find a better way to autolink xrefs that doesn't involved the
+    # use of the req-preprocessor
     match /(Req-\w+-?\d+)/
 
     # match id with  Req-\w+-?(\d+)

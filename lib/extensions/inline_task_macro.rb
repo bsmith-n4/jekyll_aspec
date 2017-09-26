@@ -4,6 +4,10 @@ require_relative 'utils/block'
 
 include ::Asciidoctor
 
+# @example Basic Usage
+#   See task:101[] for details
+# @example Block Use
+#   Already completed. task::101[]
 Extensions.register do
   inline_macro do
     named :task
@@ -11,11 +15,9 @@ Extensions.register do
     process do |parent, target, attrs|
       pattern = parent.document.attr 'task-pattern'
       url = pattern % target
-      
-      # TODO add some smart handling of multiple target repos
-      
+
       label = Labels.getstatus(attrs)
-      html = Context.form(attrs, target, url, label)
+      html = Context.format(attrs, target, url, label)
       (create_pass_block parent, html, attrs).render
     end
   end
