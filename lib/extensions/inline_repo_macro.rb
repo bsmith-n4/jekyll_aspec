@@ -71,6 +71,11 @@ Extensions.register do
         end
       end
 
+      if formattedurl.nil? 
+        warn "asciidoctor: WARNING: Attribue 'repo_...' for inline repo macro not defined"
+        pattern = "unknown"
+      end
+
       html = %(<a href=\"#{formattedurl}\" style=\"padding-right:2px;\">
                   <span class=\"label label-#{label}\" style=\"font-weight: 400;
                   font-size:smaller;\">
