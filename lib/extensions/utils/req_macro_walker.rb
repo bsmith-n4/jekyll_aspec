@@ -37,7 +37,7 @@ module Reqs
         doctitle = /(?<=title:\s).+/.match(li) if li[/^title:\s+\w.+/]
         chapter = /(?<=chapter:\s).+/.match(li) if li[/^chapter:\s+\w.+/]
 
-        if li[/\[\s*req\s*,\s*id\s*=\s*\w+-?[0-9]+\s*,.*/]
+        if li[/^\[\s*req\s*,\s*id\s*=\s*\w+-?[0-9]+\s*,.*/]
           title.sub!(/^\./, '')
           req = [li.chop, f, title, chapter, doctitle]
 

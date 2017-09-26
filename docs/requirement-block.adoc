@@ -2,14 +2,12 @@
 
 Usage::
 
-[source,asciidoc]
-----
-.title
-[req,id=RSL-3,version=1]
---
-Contents of the requirement
---
-----
+ .title
+ [req,id=RSL-3,version=1]
+ --
+ Contents of the requirement
+ --
+
 
 Attributes::
 * *title* (required):  An anchor is derived from the requirement title and embedded at the beginning of the rendered output.
@@ -32,61 +30,27 @@ Example::
 
 The following example demonstrates how to document Requirement pass:[#]3 for stdlib Version 1;
 
-// tag::req.block.example[]
-
-ifdef::env-github[]
-[source,asciidoc]
-----
-.This is the title
-[req,id=RSL-3,version=1]
---
-My Super Requirement
---
-----
+ .This is the title
+ [req,id=RSL-3,version=1]
+ --
+ My Super Requirement
+ --
 
 
 *Req. RSL-3: <<This_is_the_title,This is the title>> (ver. 1)* +
 My Super Requirement
 
-endif::[]
-
-ifndef::env-github[]
-
-[source,asciidoc]
-----
-.This is the title
-[req,id=RSL-3,version=1]
---
-My Super Requirement
---
-----
-
-
-.This is the title
-[req,id=RSL-3,version=1]
---
-My Super Requirement
---
-
-
-
-endif::[]
-
-// end::req.block.example[]
 
 == Xrefs
 
 Cross-referencing requirements is done using the syntax `\<<Req-ID,Optional Link Text>>`, e.g. for the following requirement:
 
-[source,asciidoc]
-----
-[req,id=ROPR-14603,version=1]
---
-...
---
-----
+ [req,id=ROPR-14603,version=1]
+ --
+ ...
+ --
+
 
 can be cross-referenced using the following syntax
 
-[source,adoc]
-See <<Req-ROPR-14603>>, or see also <<Req-ROPR-14603,confirm the booking>>.
+ See <<Req-ROPR-14603>>, or see also <<Req-ROPR-14603,confirm the booking>>.
