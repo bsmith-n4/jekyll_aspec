@@ -15,5 +15,5 @@ require "jekyll_aspec/version"
 Extensions.register do
   block TodoBlock
   block RequirementBlock
-  block_macro RequirementBlockMacro
+  block_macro RequirementsBlockMacro
 end
