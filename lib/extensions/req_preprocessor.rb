@@ -1,8 +1,9 @@
 require 'asciidoctor/extensions'
 
 include ::Asciidoctor
+
 # Preprocessor that strips the << tags
-# FIXME: may break conversion if line ends with >>
+# @todo may break conversion if line ends with >>
 
 req = '<<req-'
 brackets = /<<|>>/

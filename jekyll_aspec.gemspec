@@ -10,6 +10,10 @@ Gem::Specification.new do |spec|
   spec.email         = ["brian.smith@numberfour.eu"]
 
   spec.summary       = %q{Asciidoctor extensions for use as a Jekyll plugin}
+  spec.description   = %q{This plugin is a group of Asciidoctor extensions that perform directory walking, 
+                          resolving the location of titles and anchors in all adoc files so that inter-document
+                          cross-references in a Jekyll project are resolved automatically. Also included are some 
+                          custom macros and blocks that are useful for techinical writing.}
   spec.homepage      = "https://github.com/bsmith-n4/jekyll_aspec"
   spec.license       = "MIT"
 

@@ -1,0 +1,34 @@
+= Inline Task Macro
+:toc:
+
+Usage::
+[source,asciidoc]
+task:target[title]
+
+The `inline task macro` creates hyperlinks to Jira task management and GitHub issue-tracking systems.
+Optionally, it will render the links differently to reflect the status of the tasks if a task info file is provided.
+
+Note that in case two colons are given instead of only one after `task`, the task link will be moved to the sidebar.
+
+Attributes::
+* *target:* The project prefix followed by a hyphen and the task number or ID (e.g. `23`).
+* *title:* (optional) The text that will be displayed as an anchor in the generated hyperlink.
+
+== Configuration
+
+The target pattern needs to be specified in a document attribute:
+
+`:task-pattern: http://www.myorg.github.com/myrepo/issues/`
+
+For a Jekyll build, this can be added in the Jekyll `pass:[_config.yml]` to be passed to all documents:
+
+```yaml
+asciidoctor:
+  attributes:
+    task-pattern: http://www.myorg.github.com/myrepo/issues/
+```
+
+== Examples
+
+A bug has already ``+++task:35[]+++`` been filed...
+

@@ -4,10 +4,13 @@ require_relative 'utils/req_macro_walker'
 
 include ::Asciidoctor
 
-
+# @example Requirement Block Macro Use
+#   requirements::[]
 class RequirementsBlockMacro < Extensions::BlockMacroProcessor
   use_dsl
   named :requirements
+
+  # Read the parent attributes and create a list of requirements in an appendix style
   def process(parent, target, attrs)
     rows = Reqs.list_reqs
     content = %(<h2 id="requirements"><a class="anchor" href="#requirements"></a><a class="link" href="#requirements">Requirements</a></h2>

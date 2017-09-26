@@ -4,18 +4,20 @@ require_relative 'utils/block'
 
 include ::Asciidoctor
 
+# @example Basic Usage
+#   See task:101[] for details
+# @example Block Use
+#   Already completed. task::101[]
 Extensions.register do
   inline_macro do
     named :task
 
     process do |parent, target, attrs|
-      pattern =
-        (parent.document.attr 'task-pattern') ||
-        'https://jira.numberfour.eu/browse/%s'
+      pattern = parent.document.attr 'task-pattern'
       url = pattern % target
-      # Some utility functions used by similar inline macros
+
       label = Labels.getstatus(attrs)
-      html = Context.form(attrs, target, url, label)
+      html = Context.format(attrs, target, url, label)
       (create_pass_block parent, html, attrs).render
     end
   end
