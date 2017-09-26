@@ -3,12 +3,14 @@
 A lovely block of text here
 
 
-.Requirement Title
+.Requirement 456 Title
 [req,id=456,version=1]
 --
 Content of the requirement
 --
 
+
+<<Req-456>>
 
 <<Req-123>>
 
