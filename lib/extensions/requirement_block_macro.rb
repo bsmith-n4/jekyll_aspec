@@ -6,7 +6,7 @@ include ::Asciidoctor
 
 # @example Requirement Block Macro Use
 #   requirements::[]
-class RequirementsBlockMacro < Extensions::BlockMacroProcessor
+class RequirementBlockMacro < Extensions::BlockMacroProcessor
   use_dsl
   named :requirements
 

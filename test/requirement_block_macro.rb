@@ -6,7 +6,7 @@ include ::Asciidoctor
 
 # Register the Requirement block macro 
 Extensions.register do
-	block_macro RequirementsBlockMacro
+	block_macro RequirementBlockMacro
 end
 
 class TestRequirementBlock < Test::Unit::TestCase
