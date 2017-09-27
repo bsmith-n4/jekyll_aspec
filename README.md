@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/bsmith-n4/jekyll_aspec.svg?branch=master)](https://travis-ci.org/bsmith-n4/jekyll_aspec)
 
+[![Gem Version](https://badge.fury.io/rb/jekyll_aspec.svg)](https://badge.fury.io/rb/jekyll_aspec)
+
 A selection of Asciidoctor extensions designed to used to write some AsciiSpec with Jekyll. 
 
 These extensions add custom blocks for Requirements and attempts to smartly handle inter-document auto-linking functionality.
