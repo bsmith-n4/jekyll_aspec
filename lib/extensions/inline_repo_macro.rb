@@ -2,12 +2,6 @@ require 'asciidoctor/extensions' unless RUBY_ENGINE == 'opal'
 
 include ::Asciidoctor
 
-url = ''
-file = ''
-line = ''
-formattedurl = ''
-text = ''
-
 # Link to a file on GitHub.
 #
 # repo:<repository>:<file>:<line>[]
@@ -29,7 +23,16 @@ Extensions.register do
     named :repo
 
     process do |parent, target, attrs|
+      html = ''
+      url = ''
+      file = ''
+      line = ''
+      formattedurl = ''
+      text = ''
+      arr = []
+
       # @todo fix handling of use within cells. This is done using the context.
+
       if parent.context.to_s == 'cell'
         warn %([Hell in a cell] cell with repo link must have 'asciidoc format')
       end
@@ -64,25 +67,28 @@ Extensions.register do
       parent.document.attributes.each do |key, value|
         next unless key[/^repo_/]
         pattern = key.sub(/^repo_/, '')
-        if repo == pattern
-          formattedurl = "#{value}/#{branch}/#{file}#{line}"
-        else
-          url = ''
-        end
+        arr.push(pattern)
+        formattedurl = "#{value}/#{branch}/#{file}#{line}" if repo == pattern
       end
 
-      if formattedurl.nil? 
-        warn "asciidoctor: WARNING: Attribue 'repo_...' for inline repo macro not defined"
-        pattern = "unknown"
+      if arr.include? repo
+        html = %(<a href=\"#{formattedurl}\" style=\"padding-right:2px;\">
+<span class=\"label label-#{label}\" style=\"font-weight: 400;
+font-size:smaller;\">
+<i class=\"fa fa-github fa-lg\"></i>
+#{text}
+</span>
+</a>) 
+      else
+        warn "asciidoctor: WARNING: Inline Repo Macro missing config for '#{target}'"
+        html = %(<a href=\"#\" style=\"padding-right:2px;\">
+<span class=\"label label-warning\" style=\"font-weight: 400;
+font-size:smaller;\">
+<i class=\"fa fa-github fa-lg\"></i>
+Missing repo config for '#{target}'
+</span>
+</a>)   
       end
-
-      html = %(<a href=\"#{formattedurl}\" style=\"padding-right:2px;\">
-                  <span class=\"label label-#{label}\" style=\"font-weight: 400;
-                  font-size:smaller;\">
-                    <i class=\"fa fa-github fa-lg\"></i>
-                    #{text}
-                  </span>
-                </a>)
 
       (create_pass_block parent, html, attrs).render
     end
