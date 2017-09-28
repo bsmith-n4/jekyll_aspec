@@ -17,10 +17,14 @@ Extensions.register do
       if pattern.nil? 
         warn "asciidoctor: WARNING: Attribue 'cwiki-pattern' for inline repo macro not defined"
         pattern = "unknown"
+        label = "warning"
+        url = ""
+        target = "cwiki-pattern missing"
+      else
+        url = "#{pattern}/#{target}"
+        label = Labels.getstatus(attrs)        
       end
-      url = pattern % target
-
-      label = Labels.getstatus(attrs)
+      
       html = Context.format(attrs, target, url, label)
       (create_pass_block parent, html, attrs).render
     end
