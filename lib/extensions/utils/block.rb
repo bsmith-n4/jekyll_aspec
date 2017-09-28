@@ -4,7 +4,7 @@
 module Context
   # @param attributes [Array] attributes passed by the inline macro
   # @param target [String] the target text
-  # @param url [String] the target url
+  # @param pattern [String] the target url
   # @param label [String] an optional status label, used to display if a task/issue is open or closed
   # @return [String] the raw HTML to be included in the target document 
   def self.format(attributes, target, pattern, label)
