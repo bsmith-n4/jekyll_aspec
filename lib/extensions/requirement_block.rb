@@ -2,14 +2,19 @@ require "asciidoctor/extensions" unless RUBY_ENGINE == "opal"
 
 include ::Asciidoctor
 
-# TODO convert to regular pass block
-
+# @example Delimited Requirement Block with Title
+#   .My Requirement
+#   [req,id=RA-1,version=1]
+#   --
+#   Contents of the requirement
+#   --
 class RequirementBlock < Extensions::BlockProcessor
   use_dsl
   named :req
   on_contexts :open, :paragraph, :example, :listing, :sidebar, :pass
   name_positional_attributes "number", "version"
 
+  # Read the parent attributes and create a Requirement Admonition block
   def process parent, reader, attrs
     # Add pass characters here to prevent html character replacements for < > tags
     pass = "+++"
@@ -20,9 +25,7 @@ class RequirementBlock < Extensions::BlockProcessor
 
     begin
       # downcase the title and replace spaces with underscores.
-      #    Also replacing special HTML entities:
-      #    &quot; = "
-      #    &amp;  = &
+      # @todo use utility methods here?
       downcased_title = attrs["title"].downcase.tr(" ", "_").gsub('"', "&quot;")
       san_title = attrs["title"].gsub(/&/, "&amp;")
     rescue Exception => msg
@@ -47,6 +50,7 @@ class RequirementBlock < Extensions::BlockProcessor
     concat_lines = reader.lines.unshift(pass, alt, pass, nl)
     concat_lines.push(nl, pass, close, pass)
 
+    # @todo use a regular pass block in this instance
     create_block parent, :admonition, concat_lines, attrs, content_model: :compound
   end
 end

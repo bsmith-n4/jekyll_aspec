@@ -2,29 +2,34 @@ require 'asciidoctor/extensions' unless RUBY_ENGINE == 'opal'
 
 include ::Asciidoctor
 
-# Link to a file on GitHub.
-#
-# repo:<repository>:<file>:<line>[]
-#
-#   Examples:
-#
-#   repo:dockerfiles:ansible/Dockerfile_template[]
-#   repo:dockerfiles:ansible/Dockerfile_template:2[]
-#   repo:dockerfiles:ansible/Dockerfile_template:5[branch="AS_v0.0.10"]
-#   repo:dockerfiles:ansible/Dockerfile_template[line="5",branch="AS_v0.0.10"]
-#
-
 url = ''
 file = ''
 line = ''
 formattedurl = ''
 text = ''
 
+# Link to a file on GitHub.
+#
+# repo:<repository>:<file>:<line>[]
+#
+# The target should be set using document attributes prefixed by 'repo_'.
+#
+# @example Attribute configuration
+#   :repo_dockerfiles: www.github.com/exampleuser/dockerfiles/issues 
+# @example Simple Use
+#   repo:dockerfiles:ansible/Dockerfile_template[]
+# @example Link to repo and line number
+#   repo:dockerfiles:ansible/Dockerfile_template:2[]
+# @example Link to repo, branch and line number
+#   repo:dockerfiles:ansible/Dockerfile_template:5[branch="AS_v0.0.10"]
+# @example Link to repo and line number (alternate use)
+#   repo:dockerfiles:ansible/Dockerfile_template[line="5",branch="AS_v0.0.10"]
 Extensions.register do
   inline_macro do
     named :repo
 
     process do |parent, target, attrs|
+      # @todo fix handling of use within cells. This is done using the context.
       if parent.context.to_s == 'cell'
         warn %([Hell in a cell] cell with repo link must have 'asciidoc format')
       end
@@ -64,6 +69,11 @@ Extensions.register do
         else
           url = ''
         end
+      end
+
+      if formattedurl.nil? 
+        warn "asciidoctor: WARNING: Attribue 'repo_...' for inline repo macro not defined"
+        pattern = "unknown"
       end
 
       html = %(<a href=\"#{formattedurl}\" style=\"padding-right:2px;\">

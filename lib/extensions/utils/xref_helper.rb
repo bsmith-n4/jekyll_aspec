@@ -1,18 +1,37 @@
+# Helper methods for common xref processing.
+#
 module Xrefs
-
-  def self.trim(s)
-    trimmed = s.gsub(/_docs\//, '')
+  # Trims a path of a given source document to exclude the docs directory
+  # and file extension. This is used to calculate the target directory 
+  # of generated HTML files given default permalink settings.
+  #
+  # @param path [String] the path of the source document relative to the project root
+  # @return [String] the formatted path
+  def self.trim(path)
+    trimmed = path.gsub(/_docs\//, '')
     trimmed.gsub(/(\.adoc|\.md|\.html)/, '')
   end
 
-  def self.targetify(t)
-    # make all chars lowercase and substitute spaces with hyphens
-    t.downcase.gsub(/\s/, '-')
+  # Formats a string to be permalink-friendly. This simply
+  # downcases the string an substitutes spaces with hyphens. This is
+  # typically used for section titles and document titles to generate
+  # a cross-reference to an anchor.
+  #
+  # @param path [String] the path of the source document relative to the project root
+  # @return [String] the formatted path
+  def self.targetify(path)
+    path.downcase.gsub(/\s/, '-')
   end
 
+  # Recursively globs all files with the .adoc extension and matches cross-references, 
+  # section titles and anchors. Cross-references to Requirements are excluded and handled 
+  # in their own processor as they are a special case (i.e., there is no built-in support).
+  #
+  # @return [String] the formatted path
   def self.list_xrefs
 
-    # Find all Adoc Files
+    # @todo Maybe don't do this. Find a better way to process
+    # all .adoc files before extensions are loaded.
     adoc_files = Dir.glob('**/*.adoc')
 
     # Make some arrays available
@@ -29,7 +48,7 @@ module Xrefs
       File.read(file_name).each_line do |li|
         lc += 1
 
-        # Match all <<xrefs>> exluding Requirements
+        # @note Matches all <<xrefs>> except Requirements
         if li[/\<\<(?!Req)(.+?)\>\>/]
 
           text = ''
@@ -37,12 +56,15 @@ module Xrefs
           path = trim(file_name)
           xref = li.chop.match(/\<\<(?!Req)(\S.+?)\>\>/i).captures[0].to_s
 
+          # @note Checks if the xref has display text, i.e. '<<title-1,Lovely Display Text>>'
           if xref[/,/]
+            # @todo Use helper methods.
             target = xref.downcase.gsub(/,.+/, '').gsub(/\s/, '-')
             text = xref.gsub(/.+,/, '').lstrip!
             xref = xref.sub(/,.+/, '')
             path = file_name
           else
+            # @todo Use helper methods.
             target = xref.downcase.gsub(/\s/, '-')
             text = xref
           end
@@ -50,7 +72,7 @@ module Xrefs
           item = [xref, path, file_name, text, target]
           xrefs.push item
 
-          # Match .Titles and = Section Titles
+        # Match .Titles and = Section Titles
         elsif li[/(^(\.\S\w+)|^(\=+\s+?\S+.+))/]
 
           # Add check if none found (captures nil)
@@ -74,6 +96,7 @@ module Xrefs
 
           path = trim(file_name)
           item = [anchor, path, file_name, text]
+          # for the moment, just handle anchors similar to titles
           titles.push item
 
         end
