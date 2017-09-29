@@ -5,8 +5,10 @@ title: Document Two
 
 
 = Document Two
+:task-pattern: http://www.example.com/issues
+:repo_dockerfiles: http://www.github.com/exampleuser/dockerfiles
 
-A lovely block of text here
+A lovely piece of text here
 
 
 .Requirement 456 Title
@@ -22,3 +24,8 @@ Content of the requirement
 
 
 == Section Two
+
+task:123[]
+
+
+* See repo:dockerfiles:ansible/Dockerfile_template[] for more details
