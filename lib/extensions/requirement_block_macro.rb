@@ -98,6 +98,8 @@ reqs.each do |req, f, title, chapter, doctitle|
   rows.push(row)
 end
 
+rows.sort
+
 Asciidoctor::Extensions.register do
   block_macro :requirements do
 
