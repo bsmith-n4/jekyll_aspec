@@ -40,6 +40,8 @@ adoc_files.each do |f|
 
     doctitle = /(?<=title:\s).+/.match(li) if li[/^title:\s+\w.+/]
     chapter = /(?<=chapter:\s).+/.match(li) if (li[/^chapter:\s+\w.+/])
+    chapter = "Index" if chapter == nil
+
       
     if (li[/\[\s*req\s*,\s*id\s*=\s*\w+-?[0-9]+\s*,.*/])
       title.sub!(/^\./,'')
