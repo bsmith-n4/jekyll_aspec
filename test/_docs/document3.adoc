@@ -1,0 +1,16 @@
+= Document One
+:reproducible:
+
+content
+
+.Requirement 123 Title
+[req,id=123,version=1]
+--
+Content of the requirement
+--
+
+<<Document One>>
+
+<<Document Two>>
+
+requirements::[]

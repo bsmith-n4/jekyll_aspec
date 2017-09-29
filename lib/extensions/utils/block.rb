@@ -4,23 +4,33 @@
 module Context
   # @param attributes [Array] attributes passed by the inline macro
   # @param target [String] the target text
-  # @param url [String] the target url
+  # @param pattern [String] the target url
   # @param label [String] an optional status label, used to display if a task/issue is open or closed
-  # @return [String] the raw HTML to be included in the target document 
-  def self.format(attributes, target, url, label)
+  # @return [String] the raw HTML to be included in the target document
+  def self.format(attributes, target, pattern, label)
     block = false
-    block = true if attributes.key? "block"
+    block = true if attributes.key? 'block'
 
     if target[0] == "\:"
       block = true
-      target[0] = ""
+      target[0] = ''
     end
 
-    if block
-      html = "<div style=\"float:right;padding-left:0.1em;\"><a href=\"#{url}\"><span class=\"label label-#{label}\">#{target}</span></a></div>"
-    else
-      html = "<a href=\"#{url}\"><span class=\"label label-#{label}\">#{target}</span></a>"
-    end
-    return html
+    url = "#{pattern}/#{target}"
+
+    html = if block
+             if pattern == 'unknown'
+               "<div style=\"float:right;padding-left:0.1em;\"><span class=\"label label-#{label}\" data-toggle=\"tooltip\" title=\"Missing config\">#{target}</span></div>"
+             else
+               "<div style=\"float:right;padding-left:0.1em;\"><a href=\"#{url}\"><span class=\"label label-#{label}\">#{target}</span></a></div>"
+                    end
+           else
+             if pattern == 'unknown'
+               "<span class=\"label label-#{label}\" data-toggle=\"tooltip\" title=\"Missing config\">#{target}</span>"
+             else
+               "<a href=\"#{url}\"><span class=\"label label-#{label}\">#{target}</span></a>"
+                    end
+           end
+    html
   end
 end

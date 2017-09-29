@@ -1,0 +1,35 @@
+---
+chapter: subdir
+title: Document Two
+---
+
+
+= Document Two
+:task-pattern: http://www.example.com/issues
+:repo_dockerfiles: http://www.github.com/exampleuser/dockerfiles
+:reproducible: 
+
+
+A lovely piece of text here
+
+
+.Requirement 456 Title
+[req,id=456,version=1]
+--
+Content of the requirement
+--
+
+
+<<Req-456>>
+
+<<Req-123>>
+
+
+== Section Two
+
+task:123[]
+
+<<Document One>>
+
+
+* See repo:dockerfiles:ansible/Dockerfile_template[] for more details

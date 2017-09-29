@@ -1,4 +1,5 @@
 = Document One
+:reproducible:
 
 content
 
@@ -9,5 +10,7 @@ Content of the requirement
 --
 
 <<Document One>>
+
+<<Document Two>>
 
 requirements::[]

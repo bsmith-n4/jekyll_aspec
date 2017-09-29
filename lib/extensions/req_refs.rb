@@ -2,30 +2,21 @@ require 'asciidoctor/extensions' unless RUBY_ENGINE == 'opal'
 
 include ::Asciidoctor
 
-# @todo check if all code before the macro can be moved into util directory as helper methods
-
-# @todo Don't do this
+# Find all Adoc Files
 adoc_files = Dir.glob('**/*.adoc')
-# @todo Retrieve these via document attributes, should not be hardcoded
-docsdir = '_docs'
-exts = '(\.adoc|\.md|\.html)'
-
+exts = "(\.adoc|\.md|\.html)"
+# make some empty vars globally available
 rpath = nil
 rtext = nil
-orphan = false
-
 reqs = []
 inc_reqs = []
-com_reqs = []
 incs = []
 xrefs = []
-
 xref_base = ''
 
-blockrx = %r{^\/{4,}$}
-linerx = %r{^//(?=[^/]|$)}
+# Retrieve this via document attribute
+docsdir = '_docs'
 
-# @todo called helper method here
 def trim(s)
   s.gsub!(/_docs\//, '')
   s.gsub!(/(\.adoc|\.md|\.html)/, '')
@@ -38,8 +29,6 @@ adoc_files.each do |file_name|
   File.read(file_name).each_line do |li|
     lc += 1
 
-    incommentblock ^= true if li[blockrx]
-    commented = true if li[linerx]
     inc = true if li[/published: false/]
 
     # Match Requirement Blocks [req,ABC-123,version=n]
@@ -50,9 +39,7 @@ adoc_files.each do |file_name|
       path = path.sub!(/#{exts}/, '')
       item = [rid, li.chop, path, file_name, lc]
 
-      if commented || incommentblock
-        com_reqs.push item
-      elsif inc
+      if inc
         inc_reqs.push item
       else
         reqs.push item
@@ -94,52 +81,50 @@ end
 # Sort (in-place) by numberic ID
 reqs.sort_by!(&:first)
 
-# @todo convert to formal 
+# Preprocessor that strips the << tags - NOTE: may break conversion if line ends with >>
+Extensions.register do
+  preprocessor do
+    process do |_document, reader|
+      Reader.new reader.readlines.map { |li|
+        if li[/\<\<Req-.+?\>\>/]
+          openb = li.match(/(\<\<)Req-.+?\>\>/).captures[0]
+          closeb = li.match(/\<\<Req-.+?(\>\>)/).captures[0]
+          li.gsub!(/#{openb}/, ' ')
+          li.gsub!(/#{closeb}/, ' ')
+        else
+          li
+        end
+      }
+    end
+  end
+end
+
 Extensions.register do
   inline_macro do
-    named :requirement_autoxref
+    named :reqlink
 
     # Regex-based, will match "See Req-ROPR-123 for..."
-    # Will also match <<Req-ROPR-123>>
-    # @todo this is a heavy-handed approach to matching all 
-    # xrefs. Find a better way to autolink xrefs that doesn't involved the
-    # use of the req-preprocessor
     match /(Req-\w+-?\d+)/
 
     # match id with  Req-\w+-?(\d+)
     process do |parent, target|
       t = target.sub(/^Req-\w+-?/, '')
 
-      orphan = true if reqs.empty?
-
       reqs.each do |id, text, path, _file_name, _line|
-        orphan = false
-
-        if id == t
-          rpath = path
-          rtext = text.gsub(/\A\[req,id=/, '')
-          rtext = rtext.gsub(/,version=\d\]$/, '')
-          break
-        else
-          orphan = true
-        end
+        next unless id == t
+        rpath = path
+        rtext = text.gsub(/\A\[req,id=/, '')
+        rtext = rtext.gsub(/,version=\d\]$/, '')
+        break
       end
 
       link = target.sub(/^Req-/, '')
       xref_base = (parent.document.attr 'xref-base')
       uri = "#{xref_base}/#{rpath}/index.html##{link}"
-      o = ' <span class=\"label label-info\">'
+      o = ' <span class="label label-info">'
       c = ' </span>'
 
-      if orphan
-        # docfile = parent.document.attr 'docname'
-        # warn %(asciidoctor: WARNING: #{name || node.node_name} orphaned #{target} in #{docfile})
-        (create_pass_block parent, %(<strong>#{target}</strong>), {},
-                           content_model: :raw).convert
-      else
-        (create_anchor parent, %(#{o} Req. #{rtext} #{c}),
-                       type: :link, target: uri).convert
-      end
+      (create_anchor parent, %(#{o} Req. #{rtext} #{c}), type: :link, target: uri).convert
     end
   end
 end

@@ -1,6 +1,6 @@
 # Use this to set global versioning for the RubyGem
 module JekyllAspec
-  # After updating the version, publishing can be done by running 
+  # After updating the version, publishing can be done by running
   # rake release in the project root
-  VERSION = "1.0.1"
+  VERSION = '1.0.2'.freeze
 end

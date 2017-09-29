@@ -14,9 +14,9 @@ Extensions.register do
 
     process do |parent, target, attrs|
       pattern = parent.document.attr 'task-pattern'
-      if pattern.nil? 
+      if pattern.nil?
         warn "asciidoctor: WARNING: Attribue 'task-pattern' for inline task macro not defined"
-        pattern = "unknown"
+        pattern = 'unknown'
       end
       url = pattern % target
 
