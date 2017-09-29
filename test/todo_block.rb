@@ -2,11 +2,6 @@ require 'test/unit'
 require 'asciidoctor'
 require_relative "../lib/extensions/todo_block"
 
-# Register the TODO block processor
-Extensions.register do
-  block TodoBlock
-end
-
 class TestTodoBlock < Test::Unit::TestCase
   def test_simple
     input = "[TODO]\nmy reminder"

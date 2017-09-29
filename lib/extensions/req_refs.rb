@@ -2,64 +2,54 @@ require 'asciidoctor/extensions' unless RUBY_ENGINE == 'opal'
 
 include ::Asciidoctor
 
-# @todo check if all code before the macro can be moved into util directory as helper methods
-
-# @todo Don't do this
-adoc_files = Dir.glob('**/*.adoc')
-# @todo Retrieve these via document attributes, should not be hardcoded
-docsdir = '_docs'
-exts = '(\.adoc|\.md|\.html)'
-
+# Find all Adoc Files
+adoc_files = Dir.glob("**/*.adoc")
+exts = "(\.adoc|\.md|\.html)"
+# make some empty vars globally available
 rpath = nil
 rtext = nil
-orphan = false
-
 reqs = []
 inc_reqs = []
-com_reqs = []
 incs = []
 xrefs = []
+xref_base = ""
 
-xref_base = ''
+# Retrieve this via document attribute
+docsdir = "_docs"
 
-blockrx = %r{^\/{4,}$}
-linerx = %r{^//(?=[^/]|$)}
-
-# @todo called helper method here
 def trim(s)
   s.gsub!(/_docs\//, '')
   s.gsub!(/(\.adoc|\.md|\.html)/, '')
 end
 
+
 adoc_files.each do |file_name|
-  lc = 0
+  lc = 0 
   inc = false
 
   File.read(file_name).each_line do |li|
     lc += 1
 
-    incommentblock ^= true if li[blockrx]
-    commented = true if li[linerx]
-    inc = true if li[/published: false/]
+    if (li[/published: false/])
+      inc = true
+    end
 
-    # Match Requirement Blocks [req,ABC-123,version=n]
-    if li[/\[\s*req\s*,\s*id\s*=\s*(\w+-?[0-9]+)\s*,.*/]
-
+    # Match Requirement Blocks [req,ABC-123,version=n]    
+    if (li[/\[\s*req\s*,\s*id\s*=\s*(\w+-?[0-9]+)\s*,.*/])
+    
       rid = li.chop.match(/id\s*=\s*\w+-?([0-9]+)/i).captures[0]
       path = file_name.sub(/^#{docsdir}\//, '')
-      path = path.sub!(/#{exts}/, '')
+      path = path.sub!(/#{exts}/, '') 
       item = [rid, li.chop, path, file_name, lc]
 
-      if commented || incommentblock
-        com_reqs.push item
-      elsif inc
+      if inc
         inc_reqs.push item
       else
         reqs.push item
       end
 
     # Match all <<xrefs>>
-    elsif li[/\<\<\S.+?(\,\S)?\>\>/]
+    elsif (li[/\<\<\S.+?(\,\S)?\>\>/])
 
       xref = li.chop.match(/\<\<(\S.+?)(\,\S)?\>\>/i).captures[0]
       path = file_name.sub(/^#{docsdir}\//, '')
@@ -68,7 +58,7 @@ adoc_files.each do |file_name|
       xrefs.push item
 
     # Collect all includes
-    elsif li[/^include::.+.adoc\[\]/]
+    elsif (li[/^include::.+.adoc\[\]/])
 
       inc_file = li.chop.match(/(?<=^include::).+.adoc(?=\[\])/i).to_s
       path = inc_file.sub(/^#{docsdir}\//, '')
@@ -76,70 +66,74 @@ adoc_files.each do |file_name|
       parent = file_name
       item = [inc_file, path, parent, lc]
       incs.push item
-
+   
     end
   end
 end
 
 # Sort included reqs and correct the path to the include parent
-inc_reqs.each do |rid, rli, rpath, _rfile, _rline|
+inc_reqs.each do | rid, rli, rpath, rfile, rline|
   incs.each do |incfile, incpath, parent, lc|
-    next unless rpath == incpath
-    trim(parent)
-    item = [rid, rli, parent, incfile, lc]
-    reqs.push item
+    if rpath == incpath
+      trim(parent)
+      item = [rid, rli, parent, incfile, lc]
+      reqs.push item
+    end
   end
 end
 
 # Sort (in-place) by numberic ID
 reqs.sort_by!(&:first)
 
-# @todo convert to formal 
+# Preprocessor that strips the << tags - NOTE: may break conversion if line ends with >>
+Extensions.register {
+  preprocessor {
+    process {|document, reader|
+      Reader.new reader.readlines.map {|li|
+        if (li[/\<\<Req-.+?\>\>/])
+          openb = li.match(/(\<\<)Req-.+?\>\>/).captures[0]
+          closeb = li.match(/\<\<Req-.+?(\>\>)/).captures[0]
+          li.gsub!(/#{openb}/, ' ')
+          li.gsub!(/#{closeb}/, ' ')
+        else 
+          li
+        end
+      }
+    }
+  }
+}
+
+
+
 Extensions.register do
+
   inline_macro do
-    named :requirement_autoxref
+    named :reqlink
 
     # Regex-based, will match "See Req-ROPR-123 for..."
-    # Will also match <<Req-ROPR-123>>
-    # @todo this is a heavy-handed approach to matching all 
-    # xrefs. Find a better way to autolink xrefs that doesn't involved the
-    # use of the req-preprocessor
-    match /(Req-\w+-?\d+)/
-
-    # match id with  Req-\w+-?(\d+)
+    match %r/(Req-\w+-?\d+)/
+ 
+    #match id with  Req-\w+-?(\d+)
     process do |parent, target|
       t = target.sub(/^Req-\w+-?/, '')
 
-      orphan = true if reqs.empty?
-
-      reqs.each do |id, text, path, _file_name, _line|
-        orphan = false
+      reqs.each do |id, text, path, file_name, line|
 
         if id == t
           rpath = path
-          rtext = text.gsub(/\A\[req,id=/, '')
-          rtext = rtext.gsub(/,version=\d\]$/, '')
+          rtext = text.gsub(/\A\[req,id=/,'')
+          rtext = rtext.gsub(/,version=\d\]$/,'')
           break
-        else
-          orphan = true
         end
       end
 
       link = target.sub(/^Req-/, '')
       xref_base = (parent.document.attr 'xref-base')
       uri = "#{xref_base}/#{rpath}/index.html##{link}"
-      o = ' <span class=\"label label-info\">'
-      c = ' </span>'
+      o = " <span class=\"label label-info\">"
+      c = " </span>"
 
-      if orphan
-        # docfile = parent.document.attr 'docname'
-        # warn %(asciidoctor: WARNING: #{name || node.node_name} orphaned #{target} in #{docfile})
-        (create_pass_block parent, %(<strong>#{target}</strong>), {},
-                           content_model: :raw).convert
-      else
-        (create_anchor parent, %(#{o} Req. #{rtext} #{c}),
-                       type: :link, target: uri).convert
-      end
+      (create_anchor parent, %(#{o} Req. #{rtext} #{c}), type: :link, target: uri).convert
     end
   end
 end

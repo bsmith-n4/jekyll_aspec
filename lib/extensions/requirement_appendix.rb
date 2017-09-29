@@ -40,8 +40,6 @@ adoc_files.each do |f|
 
     doctitle = /(?<=title:\s).+/.match(li) if li[/^title:\s+\w.+/]
     chapter = /(?<=chapter:\s).+/.match(li) if (li[/^chapter:\s+\w.+/])
-    chapter = "Index" if chapter == nil
-
       
     if (li[/\[\s*req\s*,\s*id\s*=\s*\w+-?[0-9]+\s*,.*/])
       title.sub!(/^\./,'')
@@ -105,15 +103,16 @@ Asciidoctor::Extensions.register do
   block_macro :requirements do
 
     process do |parent, target, attrs|
-      rows.sort!
 
             content = %Q(<h2 id="requirements"><a class="anchor" href="#requirements"></a><a class="link" href="#requirements">Requirements</a></h2>
-<div class="panel panel-default"> <div class="panel-heading"><h4>Requirements</h4></div> <table class="table"><thead><tr><th>#</th> 
-<th>ID</th> <th>Version</th> <th>Title</th> <th>Document</th>
-</tr></thead> 
+<div class="panel panel-default"> <div class="panel-heading"><h4>Requirements</h4></div> 
+<table class="table"> <thead> <tr> 
+<th>#</th> <th>ID</th><th>Version</th> <th>Title</th> <th>Document</th> 
+</tr> </thead> 
 <tbody> 
 #{rows.join}
-</tbody></table></div>)
+</tbody> 
+</table> </div>)
 
     create_pass_block parent, content, {}
     end
