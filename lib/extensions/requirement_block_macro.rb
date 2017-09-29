@@ -98,12 +98,11 @@ reqs.each do |req, f, title, chapter, doctitle|
   rows.push(row)
 end
 
-rows.sort
-
 Asciidoctor::Extensions.register do
   block_macro :requirements do
 
     process do |parent, target, attrs|
+      rows.sort!
 
             content = %Q(<h2 id="requirements"><a class="anchor" href="#requirements"></a><a class="link" href="#requirements">Requirements</a></h2>
 <div class="panel panel-default"> <div class="panel-heading"><h4>Requirements</h4></div> <table class="table"><thead><tr><th>#</th> 
