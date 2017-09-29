@@ -9,7 +9,7 @@ include ::Asciidoctor
 # The target should be set using document attributes prefixed by 'repo_'.
 #
 # @example Attribute configuration
-#   :repo_dockerfiles: www.github.com/exampleuser/dockerfiles/issues 
+#   :repo_dockerfiles: www.github.com/exampleuser/dockerfiles/issues
 # @example Simple Use
 #   repo:dockerfiles:ansible/Dockerfile_template[]
 # @example Link to repo and line number
@@ -78,7 +78,7 @@ font-size:smaller;\">
 <i class=\"fa fa-github fa-lg\"></i>
 #{text}
 </span>
-</a>) 
+</a>)
       else
         warn "asciidoctor: WARNING: Inline Repo Macro missing config for '#{target}'"
         html = %(<a href=\"#\" style=\"padding-right:2px;\">
@@ -87,7 +87,7 @@ font-size:smaller;\">
 <i class=\"fa fa-github fa-lg\"></i>
 Missing repo config for '#{target}'
 </span>
-</a>)   
+</a>)
       end
 
       (create_pass_block parent, html, attrs).render

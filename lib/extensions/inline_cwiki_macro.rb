@@ -14,16 +14,16 @@ Extensions.register do
 
     process do |parent, target, attrs|
       pattern = parent.document.attr 'cwiki-pattern'
-    
-      if pattern.nil? 
+
+      if pattern.nil?
         warn "asciidoctor: WARNING: Attribue 'cwiki-pattern' for inline repo macro not defined"
-        pattern = "unknown"
-        label = "warning"
-        target = "cwiki-pattern missing"
+        pattern = 'unknown'
+        label = 'warning'
+        target = 'cwiki-pattern missing'
       else
-        label = Labels.getstatus(attrs)        
+        label = Labels.getstatus(attrs)
       end
-      
+
       html = Context.format(attrs, target, pattern, label)
       (create_pass_block parent, html, attrs).render
     end

@@ -2,14 +2,11 @@ require 'asciidoctor/extensions'
 
 include ::Asciidoctor
 
-Extensions.register {
-  postprocessor {
+Extensions.register do
+  postprocessor do
     process do |document, output|
-      if document.basebackend? 'html'
-        output = output.gsub(/<\/p>/, '')
-      end
+      output = output.gsub(/<\/p>/, '') if document.basebackend? 'html'
       output
-    end 
-  }
-}
-
+    end
+  end
+end
