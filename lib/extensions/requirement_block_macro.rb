@@ -26,6 +26,7 @@ def trim(s)
 end
 
 adoc_files = Dir.glob("**/*.adoc")
+adoc_files.sort!
 adoc_files.each do |f|
 
   inc = false
