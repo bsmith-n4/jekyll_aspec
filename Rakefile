@@ -5,7 +5,10 @@ task :default => :test
 
 task :test do
   ruby 'test/suite.rb'
-  # Run separate test for HTML postprocessor
   ruby 'test/html_postprocessor.rb'
   ruby 'test/convert_doc.rb'
+end
+
+task :rubocop do
+  sh 'rubocop'
 end
