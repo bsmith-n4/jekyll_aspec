@@ -7,6 +7,8 @@ title: Document Two
 = Document Two
 :task-pattern: http://www.example.com/issues
 :repo_dockerfiles: http://www.github.com/exampleuser/dockerfiles
+:reproducible: 
+
 
 A lovely piece of text here
 

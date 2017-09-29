@@ -1,4 +1,5 @@
 = Document One
+:reproducible:
 
 content
 
