@@ -44,8 +44,6 @@ $ gem install jekyll_aspec
 
 Yard documentation is generation automatically at [RubyDoc.info](http://www.rubydoc.info/gems/jekyll_aspec/)
 
-Also refer to the `docs` directory for some basic documentation on extended Asciidoctor features.
-
 ## Contributing
 
 This gem is under heavy initial development and there are still many kinks to work out. The areas to be improved upon include performance enhancements, proper handling of file IO / directory walking and, of course, documentation. Bug reports and pull requests are welcome on [GitHub](https://github.com/bsmith-n4/jekyll_aspec).
