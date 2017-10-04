@@ -17,12 +17,12 @@ coms = []
 inc_reqs = []
 incs = []
 
-CommentBlockRx = %r(^\/{4,}$)
-CommentLineRx = %r{^//(?=[^/]|$)}
+commentblockrx = %r(^\/{4,}$)
+commentlinerx = %r{^//(?=[^/]|$)}
 
 def trim(s)
-  s.gsub!(/_docs\//, '')
-  s.gsub!(/(\.adoc|\.md|\.html)/, '')
+  s.gsub(%r{/_docs\//}, '')
+  s.gsub(%r{/(\.adoc|\.md|\.html)/}, '')
 end
 
 adoc_files = Dir.glob('**/*.adoc')
@@ -32,15 +32,15 @@ adoc_files.each do |f|
   commented = false
 
   File.read(f).each_line do |li|
-    incommentblock ^= true if li[CommentBlockRx]
-    commented = true if li[CommentLineRx]
+    incommentblock ^= true if li[commentblockrx]
+    commented = true if li[commentlinerx]
     inc = true if li[/published: false/]
 
     doctitle = /(?<=title:\s).+/.match(li) if li[/^title:\s+\w.+/]
     chapter = /(?<=chapter:\s).+/.match(li) if li[/^chapter:\s+\w.+/]
 
     if li[/\[\s*req\s*,\s*id\s*=\s*\w+-?[0-9]+\s*,.*/]
-      title.sub!(/^\./, '')
+      title = title.sub(/^\./, '')
       req = [li.chop, f, title, chapter, doctitle]
 
       if commented || incommentblock
@@ -86,8 +86,8 @@ reqs.each do |req, f, title, chapter, doctitle|
   id = /[^,]*\s*id\s*=\s*(\w+-?[0-9]+)\s*,.*/.match(req)[1]
   version = /(?<=version=)\d+/.match(req)
 
-  f.gsub!(/^_docs\//, '')
-  f.gsub!(/.adoc$/, '')
+  f = f.gsub(/^_docs\//, '')
+  f = f.gsub(/.adoc$/, '')
 
   link = "#{f}/index##{id}"
   ref = "<a class=\"link\" href=\"#{link}\"><emphasis role=\"strong\">#{title}</emphasis>  </a>"

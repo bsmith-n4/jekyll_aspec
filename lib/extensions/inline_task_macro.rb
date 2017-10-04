@@ -8,16 +8,33 @@ include ::Asciidoctor
 #   See task:101[] for details
 # @example Block Use
 #   Already completed. task::101[]
+# @example Configuration
+# task_def_DM-: Jira;DataModel Backlog;https://jira.organisation.com/browse
+# task_def_GH-: GitHub;Project GitHub Issues;https://github.organisation.com/MyOrg/repo/issues
 Extensions.register do
   inline_macro do
     named :task
 
     process do |parent, target, attrs|
+      pa = ''
+      dest = target.match(/\w+-/).to_s.downcase if target[/-/]
       pattern = parent.document.attr 'task-pattern'
+
+      parent.document.attributes.each do |key, value|
+        next unless key[/^task_def_/]
+        pattern = key.sub(/^task_def_/, '')
+        if dest == pattern
+          type, tip, pa = value.match(/^([^^]+)\;([^^]+)\;([^^]+)/).captures
+          target.gsub!(/#{dest}/i, '') if type[/GitHub/]
+        end
+        pattern = pa
+      end
+
       if pattern.nil?
-        warn "asciidoctor: WARNING: Attribue 'task-pattern' for inline task macro not defined"
+        warn "asciidoctor: WARNING: Task pattern not defined for #{target}"
         pattern = 'unknown'
       end
+
       url = pattern % target
 
       label = Labels.getstatus(attrs)

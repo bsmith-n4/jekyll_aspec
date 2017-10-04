@@ -4,6 +4,7 @@
 module Labels
   # @param attrs [Array] attributes passed by the inline macro
   # @return [String] the status and/or label to be displayed
+  # rubocop:disable Lint/UselessAssignment
   def self.getstatus(attrs)
     status = attrs['status']
     if status == ('done' || 'closed')
@@ -15,4 +16,5 @@ module Labels
       label = 'default'
     end
   end
+  # rubocop:enable Lint/UselessAssignment
 end

@@ -16,8 +16,8 @@ mismatches = []
 replacement = ''
 
 def trim(s)
-  s.gsub!(/_docs\//, '')
-  s.gsub!(/(\.adoc|\.md|\.html)/, '')
+  s.gsub(/_docs\//, '')
+  s.gsub(/(\.adoc|\.md|\.html)/, '')
 end
 
 def targetify(t)
@@ -57,7 +57,7 @@ adoc_files.each do |file_name|
 
       # Add check if none found (captures nil)
       title = li.chop.match(/(?!=+\s)(\S+.+?)$/i).captures[0]
-      title.sub!(/\.(?=\w+?)/, '') if title[/\.(?=\w+?)/]
+      title = title.sub(/\.(?=\w+?)/, '') if title[/\.(?=\w+?)/]
       path = trim(file_name)
       item = [title, path, file_name]
       titles.push item
@@ -95,7 +95,7 @@ xrefs.each do |xref, xpath, xfile, xtext, xtarget|
     # puts "Title \"#{ttext}\" in #{tfile} - mismatched xref \"#{xref}\" to different doc - #{xpath}"
 
     xtform = targetify(xtarget)
-    detail = [xref, xtarget, xtext, xpath, xfile, ttext, tpath, tfile, xtform]
+    detail = [xtext, xfile, tfile, xtform]
     mismatches.push detail
   end
 end
@@ -106,11 +106,8 @@ Extensions.register do
       fixes = []
       i = 0
 
-      # Block is loaded once per document!!!
-      # for each malformed xref
-      mismatches.each do |_xref, _xtarget, xtext, _xpath, xfile, _ttext, _tpath, tfile, xtform|
-        # FIXME: This directory is empty in POSTS - breaks conversion
-        docfile = document.attributes['docfile'].sub(/^#{invoc}\//, '')
+      mismatches.each do |xtext, xfile, tfile, xtform|
+        docfile = document.attributes['docfile'].sub(%r{/^#{invoc}\//}, '')
         trim(docfile)
 
         next unless docfile.to_s == xfile
@@ -125,11 +122,12 @@ Extensions.register do
         fixes.push fix
       end
 
+
       Reader.new reader.readlines.map { |li|
         # If the line contains an xref (not to requirements)
         if li[/\<\<(?!Req)(.+?)\>\>/]
 
-          mismatches.each do |xref, xtarget, xtext, _xpath, _xfile, _ttext, _tpath, _tfile, _relpath|
+          mismatches.each do |xref, xtarget, xtext|
             # check if the line contains the original xref
 
             next unless li[/\<\<#{xref}(,.+)?\>\>/]
@@ -152,6 +150,7 @@ Extensions.register do
           replacement
         end
       }
-    end # each document
+    end
   end
 end
+

@@ -2,5 +2,5 @@
 module JekyllAspec
   # After updating the version, publishing can be done by running
   # rake release in the project root
-  VERSION = '1.0.2'.freeze
+  VERSION = '1.0.3'.freeze
 end

@@ -17,11 +17,6 @@ Extensions.register do
       nl = ''
 
       begin
-        # downcase the title and replace spaces with underscores.
-        #    Also replacing special HTML entities:
-        #    &quot; = "
-        #    &amp;  = &
-        downcased_title = attrs['title'].downcase.tr(' ', '_').gsub('"', '&quot;')
         san_title = attrs['title'].gsub(/&/, '&amp;')
       rescue Exception => msg
         puts msg
