@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jekyll_aspec (1.0.2)
+    jekyll_aspec (1.0.3)
       asciidoctor (>= 1.5.0)
 
 GEM
