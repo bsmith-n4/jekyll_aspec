@@ -4,6 +4,8 @@ require_relative 'utils/block'
 
 include ::Asciidoctor
 
+prefix = ''
+
 # @example Basic Usage
 #   See task:101[] for details
 # @example Block Use
@@ -22,8 +24,8 @@ Extensions.register do
 
       parent.document.attributes.each do |key, value|
         next unless key[/^task_def_/]
-        pattern = key.sub(/^task_def_/, '')
-        if dest == pattern
+        prefix = key.sub(/^task_def_/, '')
+        if dest == prefix
           type, tip, pa = value.match(/^([^^]+)\;([^^]+)\;([^^]+)/).captures
           target.gsub!(/#{dest}/i, '') if type[/GitHub/]
         end
