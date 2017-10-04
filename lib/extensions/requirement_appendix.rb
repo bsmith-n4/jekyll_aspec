@@ -17,8 +17,8 @@ coms = []
 inc_reqs = []
 incs = []
 
-CommentBlockRx = %r(^\/{4,}$)
-CommentLineRx = %r{^//(?=[^/]|$)}
+commentblockrx = %r(^\/{4,}$)
+commentlinerx = %r{^//(?=[^/]|$)}
 
 def trim(s)
   s.gsub(%r{/_docs\//}, '')
@@ -32,8 +32,8 @@ adoc_files.each do |f|
   commented = false
 
   File.read(f).each_line do |li|
-    incommentblock ^= true if li[CommentBlockRx]
-    commented = true if li[CommentLineRx]
+    incommentblock ^= true if li[commentblockrx]
+    commented = true if li[commentlinerx]
     inc = true if li[/published: false/]
 
     doctitle = /(?<=title:\s).+/.match(li) if li[/^title:\s+\w.+/]

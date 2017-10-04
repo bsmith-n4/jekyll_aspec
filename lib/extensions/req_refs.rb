@@ -103,7 +103,7 @@ Extensions.register do
       link = target.sub(/^Req-/, '')
       xref_base = (parent.document.attr 'xref-base')
       uri = "#{xref_base}/#{rpath}/index.html##{link}"
-      uri.gsub!(/\/\// , '/')
+      uri.gsub!(/\/\//, '/')
       o = ' <span class="label label-info">'
       c = ' </span>'
 

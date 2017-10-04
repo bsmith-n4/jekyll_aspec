@@ -14,15 +14,11 @@ class TestInlineCalloutMacroProcessor < Test::Unit::TestCase
     input =
       "|===\n"\
   		"| A single callout call:1[] inside a table\n"\
-  		"|===\n"
-    "The first callout: call:1[]\n"\
-		'And some duplicates: call:2[] call:2[] call:20[]'
+  		"|===\n"\
+      "The first callout: call:1[]\n"\
+		  'And some duplicates: call:2[] call:2[] call:20[]'
 
-    assert_equal("<table class=\"tableblock frame-all grid-all spread\">\n"\
-  		"<colgroup>\n<col style=\"width: 100%;\">\n</colgroup>\n<tbody>\n<tr>\n"\
-  		'<td class="tableblock halign-left valign-top"><p class="tableblock">'\
-  		"A single callout <b class=\"conum\">(1)</b> inside a table</p></td>\n"\
-  		"</tr>\n</tbody>\n</table>",
+    assert_equal("<table class=\"tableblock frame-all grid-all spread\">\n<colgroup>\n<col style=\"width: 100%;\">\n</colgroup>\n<tbody>\n<tr>\n<td class=\"tableblock halign-left valign-top\"><p class=\"tableblock\">A single callout <b class=\"conum\">(1)</b> inside a table</p></td>\n</tr>\n</tbody>\n</table>\n<div class=\"paragraph\">\n<p>The first callout: <b class=\"conum\">(1)</b>\nAnd some duplicates: <b class=\"conum\">(2)</b> <b class=\"conum\">(2)</b> <b class=\"conum\">(20)</b></p>\n</div>",
                  Asciidoctor::Document.new(input).render)
   end
 
