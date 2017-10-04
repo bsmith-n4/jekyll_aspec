@@ -40,7 +40,7 @@ adoc_files.each do |f|
     chapter = /(?<=chapter:\s).+/.match(li) if li[/^chapter:\s+\w.+/]
 
     if li[/\[\s*req\s*,\s*id\s*=\s*\w+-?[0-9]+\s*,.*/]
-      title.sub!(/^\./, '')
+      title = title.sub(/^\./, '')
       req = [li.chop, f, title, chapter, doctitle]
 
       if commented || incommentblock
@@ -86,8 +86,8 @@ reqs.each do |req, f, title, chapter, doctitle|
   id = /[^,]*\s*id\s*=\s*(\w+-?[0-9]+)\s*,.*/.match(req)[1]
   version = /(?<=version=)\d+/.match(req)
 
-  f.gsub!(/^_docs\//, '')
-  f.gsub!(/.adoc$/, '')
+  f = f.gsub(/^_docs\//, '')
+  f = f.gsub(/.adoc$/, '')
 
   link = "#{f}/index##{id}"
   ref = "<a class=\"link\" href=\"#{link}\"><emphasis role=\"strong\">#{title}</emphasis>  </a>"

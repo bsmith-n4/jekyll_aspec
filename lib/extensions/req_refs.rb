@@ -18,8 +18,8 @@ xref_base = ''
 docsdir = '_docs'
 
 def trim(s)
-  s.gsub!(/_docs\//, '')
-  s.gsub!(/(\.adoc|\.md|\.html)/, '')
+  s.gsub(/_docs\//, '')
+  s.gsub(/(\.adoc|\.md|\.html)/, '')
 end
 
 adoc_files.each do |file_name|
@@ -36,7 +36,7 @@ adoc_files.each do |file_name|
 
       rid = li.chop.match(/id\s*=\s*\w+-?([0-9]+)/i).captures[0]
       path = file_name.sub(/^#{docsdir}\//, '')
-      path = path.sub!(/#{exts}/, '')
+      path = path.sub(/#{exts}/, '')
       item = [rid, li.chop, path, file_name, lc]
 
       if inc
@@ -50,7 +50,7 @@ adoc_files.each do |file_name|
 
       xref = li.chop.match(/\<\<(\S.+?)(\,\S)?\>\>/i).captures[0]
       path = file_name.sub(/^#{docsdir}\//, '')
-      path = path.sub!(/#{exts}/, '')
+      path = path.sub(/#{exts}/, '')
       item = [xref, path, file_name, lc]
       xrefs.push item
 
@@ -81,24 +81,6 @@ end
 # Sort (in-place) by numberic ID
 reqs.sort_by!(&:first)
 
-# Preprocessor that strips the << tags - NOTE: may break conversion if line ends with >>
-Extensions.register do
-  preprocessor do
-    process do |_document, reader|
-      Reader.new reader.readlines.map { |li|
-        if li[/\<\<Req-.+?\>\>/]
-          openb = li.match(/(\<\<)Req-.+?\>\>/).captures[0]
-          closeb = li.match(/\<\<Req-.+?(\>\>)/).captures[0]
-          li.gsub!(/#{openb}/, ' ')
-          li.gsub!(/#{closeb}/, ' ')
-        else
-          li
-        end
-      }
-    end
-  end
-end
-
 Extensions.register do
   inline_macro do
     named :reqlink
@@ -121,10 +103,11 @@ Extensions.register do
       link = target.sub(/^Req-/, '')
       xref_base = (parent.document.attr 'xref-base')
       uri = "#{xref_base}/#{rpath}/index.html##{link}"
+      uri.gsub!(/\/\// , '/')
       o = ' <span class="label label-info">'
       c = ' </span>'
 
-      (create_anchor parent, %(#{o} Req. #{rtext} #{c}), type: :link, target: uri).convert
+      (create_anchor parent, %(#{o} Req. #{link} #{c}), type: :link, target: uri).convert
     end
   end
 end
