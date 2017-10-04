@@ -81,24 +81,6 @@ end
 # Sort (in-place) by numberic ID
 reqs.sort_by!(&:first)
 
-# Preprocessor that strips the << tags - NOTE: may break conversion if line ends with >>
-Extensions.register do
-  preprocessor do
-    process do |_document, reader|
-      Reader.new reader.readlines.map { |li|
-        if li[/\<\<Req-.+?\>\>/]
-          openb = li.match(/(\<\<)Req-.+?\>\>/).captures[0]
-          closeb = li.match(/\<\<Req-.+?(\>\>)/).captures[0]
-          li.gsub!(/#{openb}/, ' ')
-          li.gsub!(/#{closeb}/, ' ')
-        else
-          li
-        end
-      }
-    end
-  end
-end
-
 Extensions.register do
   inline_macro do
     named :reqlink
