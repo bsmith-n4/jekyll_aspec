@@ -110,7 +110,7 @@ Extensions.register do
       # for each malformed xref
       mismatches.each do |_xref, _xtarget, xtext, _xpath, xfile, _ttext, _tpath, tfile, xtform|
         # FIXME: This directory is empty in POSTS - breaks conversion
-        docfile = document.attributes['docfile'].sub(/^#{invoc}\//, '')
+        docfile = document.attributes['docfile'].sub(%r{/^#{invoc}\//}, '')
         trim(docfile)
 
         next unless docfile.to_s == xfile

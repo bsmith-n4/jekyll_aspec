@@ -21,8 +21,8 @@ CommentBlockRx = %r(^\/{4,}$)
 CommentLineRx = %r{^//(?=[^/]|$)}
 
 def trim(s)
-  s.gsub!(/_docs\//, '')
-  s.gsub!(/(\.adoc|\.md|\.html)/, '')
+  s.gsub(%r{/_docs\//}, '')
+  s.gsub(%r{/(\.adoc|\.md|\.html)/}, '')
 end
 
 adoc_files = Dir.glob('**/*.adoc')
