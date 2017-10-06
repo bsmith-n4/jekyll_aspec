@@ -48,7 +48,7 @@ adoc_files.each do |file_name|
     # Match all <<xrefs>>
     elsif li[/\<\<\S.+?(\,\S)?\>\>/]
 
-      xref = li.chop.match(/\<\<(\S.+?)(\,\S)?\>\>/i).captures[0]
+      xref = li.chop.match(/\<\<(\S.+?)(\,\S)?\>\>/i)
       path = file_name.sub(/^#{docsdir}\//, '')
       path = path.sub!(/#{exts}/, '')
       item = [xref, path, file_name, lc]
