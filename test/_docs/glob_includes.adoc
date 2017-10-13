@@ -1,0 +1,6 @@
+= Test Includes
+:reproducible:
+
+Include all adoc files using the globbing extension
+
+include::**/*2.adoc[]

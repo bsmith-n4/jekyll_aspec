@@ -9,3 +9,8 @@ require_relative 'extensions/requirement_block'
 require_relative 'extensions/requirement_appendix'
 require_relative 'extensions/todo_block'
 require_relative 'jekyll_aspec/version'
+require_relative 'extensions/glob-include-processor'
+
+Asciidoctor::Extensions.register do
+  include_processor GlobIncludeProcessor
+end
