@@ -4,16 +4,14 @@ include ::Asciidoctor
 
 Extensions.register do
   block do
-    named :req
+    named :def
     on_contexts :open, :paragraph, :example, :listing, :sidebar, :pass
-    name_positional_attributes 'number', 'version'
 
     process do |parent, reader, attrs|
       # Add pass characters here to prevent html character replacements for < > tags
       pass = '+++'
-      attrs['name'] = 'requirement'
-      attrs['caption'] = 'Requirement: '
-      id = attrs['id']
+      attrs['name'] = 'definition'
+      attrs['caption'] = 'Definition: '
       nl = ''
 
       begin
@@ -25,16 +23,16 @@ Extensions.register do
         san_title = attrs['title'].gsub(/&/, '&amp;').gsub(/\`/, '').gsub(/\'/, '').gsub(/\*/, '')
       rescue Exception => msg
         puts msg
-        # If no title exists on the Req block, throw an exception
-        puts '[ERROR] Requirement block title missing'
+        # If no title exists on the Def block, throw an exception
+        puts '[ERROR] Definition block title missing'
       end
 
       alt = %(
 <div class=\"panel panel-primary\">
 <div class=\"panel-heading\">
 <h3 class=\"panel-title\">
-<a class=\"anchor\" href=\"##{id}\"></a>
-<a class=\"link\" href=\"##{id}\"><emphasis role=\"strong\">Requirement: #{id}:</emphasis> #{san_title} </a> (ver. #{attrs['version']})
+<a class=\"anchor\" href=\"##{san_title}\"></a>
+<a class=\"link\" href=\"##{san_title}\"><emphasis role=\"strong\">Definition: </emphasis> #{san_title} </a>
 </h3>
 </div>
 <div class=\"panel-body\">)
