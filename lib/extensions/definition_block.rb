@@ -20,7 +20,7 @@ Extensions.register do
         #    &quot; = "
         #    &amp;  = &
         downcased_title = attrs['title'].downcase.tr(' ', '_').gsub('"', '&quot;')
-        san_title = attrs['title'].gsub(/&/, '&amp;').gsub(/\`/, '').gsub(/\'/, '').gsub(/\*/, '')
+        san_title = attrs['title'].gsub(/&/, '&amp;').delete('`').delete("'").delete('*')
       rescue Exception => msg
         puts msg
         # If no title exists on the Def block, throw an exception

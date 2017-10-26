@@ -2,7 +2,7 @@ require 'test/unit'
 require 'asciidoctor'
 require_relative '../lib/extensions/requirement_block'
 
-class TestRequirementBlock < Test::Unit::TestCase
+class TestDefinitionBlock < Test::Unit::TestCase
   def test_delimited_with_title
     input = "\n.Roundness\n[def]\n--\nRoundness is the measure of how closely the shape of an object approaches that of a mathematically perfect circle.\n--\n"
 
