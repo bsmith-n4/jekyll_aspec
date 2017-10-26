@@ -1,5 +1,6 @@
 require_relative 'extensions/html_postprocessor'
 require_relative 'extensions/autoxrefs'
+require_relative 'extensions/definition_block'
 require_relative 'extensions/inline_callout_macro'
 require_relative 'extensions/inline_cwiki_macro'
 require_relative 'extensions/inline_repo_macro'
