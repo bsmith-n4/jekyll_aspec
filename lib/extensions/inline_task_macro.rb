@@ -33,6 +33,7 @@ Extensions.register do
       end
 
       if pattern.nil?
+        target.delete!(':')
         warn "asciidoctor: WARNING: Task pattern not defined for #{target}"
         pattern = 'unknown'
       end
