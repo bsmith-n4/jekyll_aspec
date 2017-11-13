@@ -95,7 +95,7 @@ reqs.each do |req, f, title, chapter, doctitle|
   link = "#{f}/index##{id}"
   ref = "<a class=\"link\" href=\"#{link}\"><emphasis role=\"strong\">#{title}</emphasis>  </a>"
   breadcrumb = "<a href=\"#{f}\">#{chapter} / #{doctitle}</a>"
-  row = "<tr> <th scope=\"row\">#{i}</th> <td>#{id}</td><td>#{version}</td> <td>#{ref}</td> <td>#{breadcrumb}</td> </tr>"
+  row = "<tr> <th scope=\"row\">#{i}</th> <td style=\"white-space:pre;\">#{id}</td><td>#{version}</td> <td>#{ref}</td> <td>#{breadcrumb}</td> </tr>"
 
   rows.push(row)
 end
