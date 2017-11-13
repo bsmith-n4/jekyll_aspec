@@ -40,11 +40,11 @@ adoc_files.each do |file_name|
       xref = li.chop.match(/\<\<(?!Req)(\S.+?)\>\>/i).captures[0].to_s
 
       if xref[/,/]
-        target = xref.downcase.gsub(/,.+/, '').gsub(/\s/, '-')
-        text = xref.gsub(/.+,/, '').lstrip!
+        target = xref.gsub(/,.+/, '').gsub(/\s/, '-')
+        text = xref.gsub(/.+,/, '').lstrip
         xref = xref.sub(/,.+/, '')
       else
-        target = xref.downcase.gsub(/\s/, '-')
+        target = xref.gsub(/\s/, '-')
         text = xref
       end
 
@@ -54,9 +54,9 @@ adoc_files.each do |file_name|
     # Match Block .Titles and = Section Titles
     elsif li[/(^(\.\S\w+)|^(\=+\s+?\S+.+))/]
 
-      h1 = true if li[/^= \w/]
+      h1 = true if li[/^(\=+\s+?\S+.+)/]
       title = li.chop.match(/(?!=+\s)(\S+.+?)$/i).captures[0]
-      title.sub!(/\.(?=\w+?)/, '') if title[/\.(?=\w+?)/]
+      title.sub!(/\.(?=\w+?)/, '') if title[/\.(?=\w+?)/]   
       item = [title, path, file_name, underscorify(title), h1]
       titles.push item
 
@@ -78,10 +78,6 @@ adoc_files.each do |file_name|
   end
 end
 
-# Remove duplicates in-place
-xrefs.uniq!
-titles.uniq!
-
 # Run through each xref and check for matching titles
 xrefs.each do |xref, xpath, xfile, xtext, xtarget|
   # check xrefs against titles
@@ -92,7 +88,7 @@ xrefs.each do |xref, xpath, xfile, xtext, xtarget|
     next unless ttext == xtext || ttext == xref || alt == xref || alt == xtarget
     next unless tpath != xpath
     tpath = 'index' if tpath.to_s.empty?
-    xtform = underscorify(xtarget)
+    xtform = underscorify(xtarget) if h1
     xfile = trim(xfile)
     detail = [xref, xtarget, xtext, xpath, xfile, ttext, tpath, tfile, xtform, alt, h1]
     mismatches.push detail
@@ -100,14 +96,12 @@ xrefs.each do |xref, xpath, xfile, xtext, xtarget|
   end
 end
 
-mismatches.uniq!
-
 Extensions.register do
   preprocessor do
     process do |document, reader|
       fixes = []
       
-      mismatches.each do |_xref, _xtarget, xtext, _xpath, xfile, _ttext, _tpath, tfile, xtform|
+      mismatches.each do |_xref, _xtarget, xtext, _xpath, xfile, _ttext, _tpath, tfile, xtform, alt, h1|
         docfile = document.attributes['docfile'].sub(/^#{invoc}\//, '')
         trim(docfile)
         next unless docfile.to_s == xfile
@@ -117,7 +111,9 @@ Extensions.register do
         first = Pathname.new xfile.to_s
         second = Pathname.new tfile.to_s
         relpath = second.relative_path_from first
-        relpath = relpath.sub(/^\.\.\//, '') if docfile == 'index'
+        relpath = relpath.sub(/^\.\.\//, '') if docfile == 'index' 
+        xtform = _xref if xtform.to_s.empty?
+        xtform = underscorify(xtform) if xtform[/\s/] || h1
         fix = "#{relpath}/index##{xtform},#{xtext}"
         fixes.push fix
       end
@@ -127,18 +123,18 @@ Extensions.register do
       Reader.new reader.readlines.map { |li|
         # If the line contains an xref (not to requirements)
         if li[/\<\<(?!Req)(.+?)\>\>/]
-          mismatches.delete_if do |xref, xtarget, xtext, _xpath, _xfile, _ttext, _tpath, _tfile, _relpath, alt, h1|
+          mismatches.each do |xref, xtarget, xtext, _xpath, _xfile, _ttext, _tpath, _tfile, _relpath, alt, h1|
             # check if the line contains the original xref
             next unless li[/\<\<#{xref}(,.+)?\>\>/]
+            alt = xref if alt.to_s.empty?
             fixes.each do |x|
               next unless x[/(#{xtarget}|#{alt})/]
               t = xref if xtext.to_s.empty?
               x = x.sub(/(?!=index.html#).+/, '') if h1
-              x = trim(x)
+              x = x.gsub(/_docs\//, '')
+              x = x.gsub(/(\.adoc|\.md|\.html)/, '')
               replacement = li.sub(/\<\<#{xref}(,.+)?\>\>/, "icon:expand[] <<#{x}#{t}>> ")
             end
-            # Delete Mismatches to speed up iteration
-            true
           end
         else
           replacement = ''
