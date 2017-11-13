@@ -36,28 +36,32 @@ adoc_files.each do |file_name|
     # Match all <<xrefs>> (Excluding Requirements! - handled separately)
     if li[/\<\<(?!Req)(.+?)\>\>/]
 
-      text, target = '', ''
-      xref = li.chop.match(/\<\<(?!Req)(\S.+?)\>\>/i).captures[0].to_s
-
-      if xref[/,/]
-        target = xref.gsub(/,.+/, '').gsub(/\s/, '-')
-        text = xref.gsub(/.+,/, '').lstrip
-        xref = xref.sub(/,.+/, '')
-      else
-        target = xref.gsub(/\s/, '-')
-        text = xref
-      end
-
-      item = [xref, path, file_name, text, target]
-      xrefs.push item
+      num_refs = li.scan(/(?=\<\<(?!Req)(.+?)\>\>)/).count
+      
+      li.scan(/(?=\<\<(?!Req)(.+?)\>\>)/) {|xref| 
+        xref = xref[0].to_s
+        text, target = '', ''
+        #xref = xref.chop.match(/\<\<(?!Req)(\S.+?)\>\>/i).captures[0].to_s
+        if xref[/,/]
+          target = xref.gsub(/,.+/, '').gsub(/\s/, '-')
+          text = xref.gsub(/.+,/, '').lstrip
+          xref = xref.sub(/,.+/, '')
+        else
+          target = xref.gsub(/\s/, '-')
+          text = xref
+        end
+        item = [xref, path, file_name, text, target]
+        xrefs.push item
+      }
 
     # Match Block .Titles and = Section Titles
     elsif li[/(^(\.\S\w+)|^(\=+\s+?\S+.+))/]
 
       h1 = true if li[/^(\=+\s+?\S+.+)/]
       title = li.chop.match(/(?!=+\s)(\S+.+?)$/i).captures[0]
-      title.sub!(/\.(?=\w+?)/, '') if title[/\.(?=\w+?)/]   
-      item = [title, path, file_name, underscorify(title), h1]
+      title.sub!(/\.(?=\w+?)/, '') if title[/\.(?=\w+?)/]
+      title = title.strip   
+      item = [title, path, file_name, underscorify(title).strip, h1]
       titles.push item
 
     # Match [[anchors]]
@@ -105,35 +109,36 @@ Extensions.register do
         docfile = document.attributes['docfile'].sub(/^#{invoc}\//, '')
         trim(docfile)
         next unless docfile.to_s == xfile
-
         # calculate the relative path between source and target
         # TODO - abstract the following
         first = Pathname.new xfile.to_s
         second = Pathname.new tfile.to_s
         relpath = second.relative_path_from first
-        relpath = relpath.sub(/^\.\.\//, '') if docfile == 'index' 
+        relpath = relpath.sub(/^\.\.\//, '') if docfile == 'index'
         xtform = _xref if xtform.to_s.empty?
         xtform = underscorify(xtform) if xtform[/\s/] || h1
         fix = "#{relpath}/index##{xtform},#{xtext}"
         fixes.push fix
       end
 
-      fixes.uniq! unless fixes.empty?
-
       Reader.new reader.readlines.map { |li|
         # If the line contains an xref (not to requirements)
         if li[/\<\<(?!Req)(.+?)\>\>/]
-          mismatches.each do |xref, xtarget, xtext, _xpath, _xfile, _ttext, _tpath, _tfile, _relpath, alt, h1|
-            # check if the line contains the original xref
-            next unless li[/\<\<#{xref}(,.+)?\>\>/]
-            alt = xref if alt.to_s.empty?
-            fixes.each do |x|
-              next unless x[/(#{xtarget}|#{alt})/]
-              t = xref if xtext.to_s.empty?
-              x = x.sub(/(?!=index.html#).+/, '') if h1
-              x = x.gsub(/_docs\//, '')
-              x = x.gsub(/(\.adoc|\.md|\.html)/, '')
-              replacement = li.sub(/\<\<#{xref}(,.+)?\>\>/, "icon:expand[] <<#{x}#{t}>> ")
+          num_refs = li.scan(/(?=\<\<(?!Req)(.+?)\>\>)/).count
+          num_refs.times do
+            mismatches.each do |xref, xtarget, xtext, _xpath, _xfile, _ttext, _tpath, _tfile, _relpath, alt, h1|
+              # check if the line contains the original xref
+              next unless li[/\<\<#{xref}(,.+)?\>\>/]      
+              alt = xref if alt.to_s.empty?
+              fixes.each do |x|
+                next unless x[/(#{xtarget}|#{alt})/]
+                t = xref if xtext.to_s.empty?
+                x = x.gsub(/_docs\//, '')
+                x = x.gsub(/(\.adoc|\.md|\.html)/, '')
+                x = x.sub(/(?!=index.html#).+/, '') if h1
+                li = li.sub(/\<\<#{xref}(,.+)?\>\>/, "icon:expand[] <<#{x}#{t}>> ")
+                replacement = li
+              end
             end
           end
         else
