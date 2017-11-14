@@ -25,6 +25,12 @@ def underscorify(t)
   t = t.gsub(/___/, '_').delete('`')
 end
 
+def titleify(t)
+  t = t.gsub(/\_/, ' ')
+  t = t.lstrip
+  t = t.split.map(&:capitalize).join(' ')
+end
+
 adoc_files.each do |file_name|
   lc = 0
 
@@ -33,12 +39,15 @@ adoc_files.each do |file_name|
     lc += 1
     path = trim(file_name)
 
+    # Match all <<xrefs>> (Excluding Requirements! - handled separately)
     if li[/\<\<(?!Req)(.+?)\>\>/]
 
-      #num_refs = li.scan(/(?=\<\<(?!Req)(.+?)\>\>)/).count
+      num_refs = li.scan(/(?=\<\<(?!Req)(.+?)\>\>)/).count
+      
       li.scan(/(?=\<\<(?!Req)(.+?)\>\>)/) {|xref| 
-        text, target = '', ''
         xref = xref[0].to_s
+        text, target = '', ''
+        #xref = xref.chop.match(/\<\<(?!Req)(\S.+?)\>\>/i).captures[0].to_s
         if xref[/,/]
           target = xref.gsub(/,.+/, '').gsub(/\s/, '-')
           text = xref.gsub(/.+,/, '').lstrip
@@ -79,7 +88,9 @@ adoc_files.each do |file_name|
   end
 end
 
+# Run through each xref and check for matching titles
 xrefs.each do |xref, xpath, xfile, xtext, xtarget|
+  # check xrefs against titles
   titles.each do |ttext, tpath, tfile, alt, h1|
 
     # IMPORTANT - If unnecessary matches are made here, there are exponentially large performance knocks
@@ -103,14 +114,16 @@ Extensions.register do
       mismatches.each do |_xref, _xtarget, xtext, _xpath, xfile, _ttext, _tpath, tfile, xtform, alt, h1|
         docfile = document.attributes['docfile'].sub(/^#{invoc}\//, '')
         trim(docfile)
-
         next unless docfile.to_s == xfile
+        # calculate the relative path between source and target
+        # TODO - abstract the following
         first = Pathname.new xfile.to_s
         second = Pathname.new tfile.to_s
         relpath = second.relative_path_from first
         relpath = relpath.sub(/^\.\.\//, '') if docfile == 'index'
         xtform = _xref if xtform.to_s.empty?
         xtform = underscorify(xtform) if xtform[/\s/] || h1
+        xtext = titleify(xtext) if xtext[/\_/]
         fix = "#{relpath}/index##{xtform},#{xtext}"
         fixes.push fix
       end
@@ -129,7 +142,7 @@ Extensions.register do
                 t = xref if xtext.to_s.empty?
                 x = x.gsub(/_docs\//, '')
                 x = x.gsub(/(\.adoc|\.md|\.html)/, '')
-                x = x.sub(/(?!=index.html#).+/, '') if h1
+                #x = x.sub(/(?!=index.html#).+/, '') if h1
                 li = li.sub(/\<\<#{xref}(,.+)?\>\>/, "icon:expand[] <<#{x}#{t}>> ")
                 replacement = li
               end
