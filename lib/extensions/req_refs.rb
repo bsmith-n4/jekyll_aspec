@@ -5,13 +5,9 @@ include ::Asciidoctor
 # Find all Adoc Files
 adoc_files = Dir.glob('**/*.adoc')
 exts = "(\.adoc|\.md|\.html)"
-# make some empty vars globally available
-rpath = nil
-rtext = nil
-reqs = []
-inc_reqs = []
-incs = []
-xrefs = []
+
+rpath, rtext = nil
+reqs, inc_reqs, incs, xrefs = [], [], [], []
 xref_base = ''
 
 # Retrieve this via document attribute
@@ -23,12 +19,9 @@ def trim(s)
 end
 
 adoc_files.each do |file_name|
-  lc = 0
   inc = false
 
   File.read(file_name).each_line do |li|
-    lc += 1
-
     inc = true if li[/published: false/]
 
     # Match Requirement Blocks [req,ABC-123,version=n]
@@ -37,7 +30,7 @@ adoc_files.each do |file_name|
       rid = li.chop.match(/id\s*=\s*\w+-?([0-9]+)/i).captures[0]
       path = file_name.sub(/^#{docsdir}\//, '')
       path = path.sub!(/#{exts}/, '')
-      item = [rid, li.chop, path, file_name, lc]
+      item = [rid, li.chop, path, file_name]
 
       if inc
         inc_reqs.push item
@@ -51,7 +44,7 @@ adoc_files.each do |file_name|
       xref = li.chop.match(/\<\<(\S.+?)(\,\S)?\>\>/i)
       path = file_name.sub(/^#{docsdir}\//, '')
       path = path.sub!(/#{exts}/, '')
-      item = [xref, path, file_name, lc]
+      item = [xref, path, file_name]
       xrefs.push item
 
     # Collect all includes
@@ -61,7 +54,7 @@ adoc_files.each do |file_name|
       path = inc_file.sub(/^#{docsdir}\//, '')
       path = path.sub(/#{exts}/, '')
       parent = file_name
-      item = [inc_file, path, parent, lc]
+      item = [inc_file, path, parent]
       incs.push item
 
     end
@@ -70,10 +63,10 @@ end
 
 # Sort included reqs and correct the path to the include parent
 inc_reqs.each do |rid, rli, rpath, _rfile, _rline|
-  incs.each do |incfile, incpath, parent, lc|
+  incs.each do |incfile, incpath, parent|
     next unless rpath == incpath
     trim(parent)
-    item = [rid, rli, parent, incfile, lc]
+    item = [rid, rli, parent, incfile]
     reqs.push item
   end
 end
@@ -81,16 +74,21 @@ end
 # Sort (in-place) by numberic ID
 reqs.sort_by!(&:first)
 
-# Preprocessor that strips the << tags - NOTE: may break conversion if line ends with >>
+# Preprocessor that strips the << tags
 Extensions.register do
   preprocessor do
     process do |_document, reader|
       Reader.new reader.readlines.map { |li|
         if li[/\<\<Req-.+?\>\>/]
-          openb = li.match(/(\<\<)Req-.+?\>\>/).captures[0]
-          closeb = li.match(/\<\<Req-.+?(\>\>)/).captures[0]
-          li.gsub!(/#{openb}/, ' ')
-          li.gsub!(/#{closeb}/, ' ')
+          # Handle multiple reqs per line
+          spl = li.split(/ /)
+          spl.each {|x|
+            if x[/\<\<Req-.+?\>\>/] 
+              x.gsub!(/<</, ' ')
+              x.gsub!(/>>/, ' ')
+            end
+          }
+          spl.join(' ')
         else
           li
         end
@@ -122,7 +120,7 @@ Extensions.register do
       xref_base = (parent.document.attr 'xref-base')
       uri = "#{xref_base}/#{rpath}/index.html##{link}"
       o = ' <span class="label label-info">'
-      c = ' </span>'
+      c = ' </span> '
 
       (create_anchor parent, %(#{o} Req. #{rtext} #{c}), type: :link, target: uri).convert
     end
