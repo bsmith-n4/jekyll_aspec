@@ -33,15 +33,12 @@ adoc_files.each do |file_name|
     lc += 1
     path = trim(file_name)
 
-    # Match all <<xrefs>> (Excluding Requirements! - handled separately)
     if li[/\<\<(?!Req)(.+?)\>\>/]
 
-      num_refs = li.scan(/(?=\<\<(?!Req)(.+?)\>\>)/).count
-      
+      #num_refs = li.scan(/(?=\<\<(?!Req)(.+?)\>\>)/).count
       li.scan(/(?=\<\<(?!Req)(.+?)\>\>)/) {|xref| 
-        xref = xref[0].to_s
         text, target = '', ''
-        #xref = xref.chop.match(/\<\<(?!Req)(\S.+?)\>\>/i).captures[0].to_s
+        xref = xref[0].to_s
         if xref[/,/]
           target = xref.gsub(/,.+/, '').gsub(/\s/, '-')
           text = xref.gsub(/.+,/, '').lstrip
@@ -82,9 +79,7 @@ adoc_files.each do |file_name|
   end
 end
 
-# Run through each xref and check for matching titles
 xrefs.each do |xref, xpath, xfile, xtext, xtarget|
-  # check xrefs against titles
   titles.each do |ttext, tpath, tfile, alt, h1|
 
     # IMPORTANT - If unnecessary matches are made here, there are exponentially large performance knocks
@@ -108,9 +103,8 @@ Extensions.register do
       mismatches.each do |_xref, _xtarget, xtext, _xpath, xfile, _ttext, _tpath, tfile, xtform, alt, h1|
         docfile = document.attributes['docfile'].sub(/^#{invoc}\//, '')
         trim(docfile)
+
         next unless docfile.to_s == xfile
-        # calculate the relative path between source and target
-        # TODO - abstract the following
         first = Pathname.new xfile.to_s
         second = Pathname.new tfile.to_s
         relpath = second.relative_path_from first
