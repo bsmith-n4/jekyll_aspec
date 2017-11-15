@@ -88,7 +88,7 @@ Extensions.register do
               x.gsub!(/>>/, ' ')
             end
           }
-          spl.join(' ')
+          spl.join(' ').lstrip
         else
           li
         end
