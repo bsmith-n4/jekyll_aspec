@@ -33,21 +33,21 @@ end
 
 adoc_files.each do |file_name|
   lc = 0
-
+  
   File.read(file_name).each_line do |li|
     h1 = false
     lc += 1
     path = trim(file_name)
 
     # Match all <<xrefs>> (Excluding Requirements! - handled separately)
-    if li[/\<\<(?!Req)(.+?)\>\>/]
+    if li[/\<\<(?!Req-)(.+?)\>\>/]
 
-      num_refs = li.scan(/(?=\<\<(?!Req)(.+?)\>\>)/).count
+      num_refs = li.scan(/(?=\<\<(?!Req-)(.+?)\>\>)/).count
       
-      li.scan(/(?=\<\<(?!Req)(.+?)\>\>)/) {|xref| 
+      li.scan(/(?=\<\<(?!Req-)(.+?)\>\>)/) {|xref| 
         xref = xref[0].to_s
         text, target = '', ''
-        #xref = xref.chop.match(/\<\<(?!Req)(\S.+?)\>\>/i).captures[0].to_s
+        #xref = xref.chop.match(/\<\<(?!Req-)(\S.+?)\>\>/i).captures[0].to_s
         if xref[/,/]
           target = xref.gsub(/,.+/, '').gsub(/\s/, '-')
           text = xref.gsub(/.+,/, '').lstrip
@@ -130,8 +130,8 @@ Extensions.register do
 
       Reader.new reader.readlines.map { |li|
         # If the line contains an xref (not to requirements)
-        if li[/\<\<(?!Req)(.+?)\>\>/]
-          num_refs = li.scan(/(?=\<\<(?!Req)(.+?)\>\>)/).count
+        if li[/\<\<(?!Req-)(.+?)\>\>/]
+          num_refs = li.scan(/(?=\<\<(?!Req-)(.+?)\>\>)/).count
           num_refs.times do
             mismatches.each do |xref, xtarget, xtext, _xpath, _xfile, _ttext, _tpath, _tfile, _relpath, alt, h1|
               # check if the line contains the original xref
